@@ -26,6 +26,45 @@ var model={
     shipsSunk:0,
     boardSize:6,
     shiplenght:3,
+    generateShipLocation:function(){
+            var newShipLoc;
+            for(var i=0;i<this.numShips;i++){
+        do {
+            var newShipLoc=this.generateShip();
+        } while (this.collision(newShipLoc));
+            
+            this.ships[i].locations.push(newShipLoc);
+    }
+    console.log(locations)
+    },
+    generateShip:function(){
+       var row= Math.floor(Math.random()*(this.boardSize-2));
+       var colm= Math.floor(Math.random()*(this.boardSize-2));
+      var virticalOrHorzontal=Math.floor(Math.random()*2);
+      var ship=[];
+      if(virticalOrHorzontal==1){ship.push(row.toString()+colm.toString());
+        ++row;
+ship.push(row.toString()+colm.toString());
+++row;
+ship.push(row.toString()+colm.toString());
+      }
+      else {
+        ship.push(row.toString()+colm.toString());
+        ++colm;
+ship.push(row.toString()+colm.toString());
+++colm;
+ship.push(row.toString()+colm.toString());
+
+      }
+console.log(ship)
+return ship;
+
+    },
+    collision:function(shipLoc){
+        
+        return false
+        
+    },
     fire:function(userInput){
        
        for(var i=0;i<this.ships.length;i++){
@@ -54,7 +93,13 @@ var Controller={
         this.gusses++;
         var userans=parseGuess(userInput);
         if(userans!=null){
-            model.fire(userans);
+            var isHit=model.fire(userans);
+            if(isHit&&model.shipsSunk==model.numShips){
+                view.message("You sank all my battleships, in " + 
+        this.gusses + " guesses");
+gusse.remove();
+
+            }
         }
     }
 
@@ -63,9 +108,11 @@ var Controller={
 var gusse=document.getElementById("guessInput");
 
 var butt=document.getElementById("fireButton");
+
 butt.addEventListener('click',function(){
-    console.log(gusse.value)
+    
     Controller.prossess(gusse.value)
+    gusse.value=""
 })
 
 function parseGuess(guess) {
@@ -92,11 +139,20 @@ else {
 
 
 
+model.generateShipLocation()
 
 
 
-
-
+/* Controller.prossess("A0");
+Controller.prossess("A6");
+Controller.prossess("B6");
+Controller.prossess("C6");
+Controller.prossess("C4");
+Controller.prossess("D4");
+Controller.prossess("E4");
+Controller.prossess("B0");
+Controller.prossess("B1");
+Controller.prossess("B2"); */
 
 
 
