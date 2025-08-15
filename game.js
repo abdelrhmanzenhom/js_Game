@@ -1,3 +1,4 @@
+
 var view={
     message:function(messg){
         var massegeBox=document.getElementById("messageArea");
@@ -19,12 +20,12 @@ else{loc.setAttribute("class","miss");}
 
 
 var model={
-    ships :  [{ locations: ["06", "16", "26"], hits: ["", "", ""] },
- { locations: ["24", "34", "44"], hits: ["", "", ""] },
- { locations: ["10", "11", "12"], hits: ["", "", ""] }],
+    ships :  [{ locations: [], hits: ["", "", ""] },
+ { locations: [], hits: ["", "", ""] },
+ { locations: [], hits: ["", "", ""] }],
     numShips:3,
     shipsSunk:0,
-    boardSize:6,
+    boardSize:7,
     shiplenght:3,
     generateShipLocation:function(){
             var newShipLoc;
@@ -33,43 +34,50 @@ var model={
             var newShipLoc=this.generateShip();
         } while (this.collision(newShipLoc));
             
-            this.ships[i].locations.push(newShipLoc);
+            this.ships[i].locations=newShipLoc;
     }
-    console.log(locations)
+    
     },
     generateShip:function(){
-       var row= Math.floor(Math.random()*(this.boardSize-2));
-       var colm= Math.floor(Math.random()*(this.boardSize-2));
-      var virticalOrHorzontal=Math.floor(Math.random()*2);
+       var row;
+       var colm;
+      var Horzontal=Math.floor(Math.random()*2);
       var ship=[];
-      if(virticalOrHorzontal==1){ship.push(row.toString()+colm.toString());
-        ++row;
-ship.push(row.toString()+colm.toString());
-++row;
-ship.push(row.toString()+colm.toString());
-      }
+      if(Horzontal==1){
+        row = Math.floor(Math.random()*(this.boardSize-this.shiplenght));
+       colm= Math.floor(Math.random()*(this.boardSize));
+       for(var i=0;i<this.shiplenght;i++){
+        ship.push(row.toString()+(colm+i).toString());
+      }}
       else {
-        ship.push(row.toString()+colm.toString());
-        ++colm;
-ship.push(row.toString()+colm.toString());
-++colm;
-ship.push(row.toString()+colm.toString());
+         row = Math.floor(Math.random()*(this.boardSize));
+        colm= Math.floor(Math.random()*(this.boardSize-this.shiplenght));
+for(var i=0;i<this.shiplenght;i++){
+    
+        ship.push(row.toString()+(colm+i).toString());
+        
+}
 
       }
-console.log(ship)
+
 return ship;
 
     },
     collision:function(shipLoc){
-        
-        return false
+        for(var i=0;i<this.numShips;i++){
+            for(var j=0;j<this.shiplenght;j++){
+                if(this.ships[i].locations.indexOf(shipLoc[j])!=-1)return true;
+            }
+        }
+        return false;
         
     },
     fire:function(userInput){
        
-       for(var i=0;i<this.ships.length;i++){
-
-        for(var j=0;j<this.ships[i].locations.length;j++){
+       for(var i=0;i<this.numShips;i++){
+//console.log(this.ships[i].locations)
+        for(var j=0;j<this.shiplenght;j++){
+            console.log(this.ships[i].locations[j],userInput)
             if(this.ships[i].locations[j]==userInput){this.ships[i].hits[j]="hit";view.message("Hitt!");view.display(userInput,true);
                 if(this.isSunck(this.ships[i])){this.shipsSunk++;view.message("you sank my battleship !");}return true;}
         }
@@ -105,16 +113,6 @@ gusse.remove();
 
 
 }
-var gusse=document.getElementById("guessInput");
-
-var butt=document.getElementById("fireButton");
-
-butt.addEventListener('click',function(){
-    
-    Controller.prossess(gusse.value)
-    gusse.value=""
-})
-
 function parseGuess(guess) {
     var alphabet = ["A", "B", "C", "D", "E", "F", "G"];
  if (guess === null || guess.length !== 2) {
@@ -137,9 +135,29 @@ else {
 
 
 
-
-
+function init(){
 model.generateShipLocation()
+var gusse=document.getElementById("guessInput");
+
+var butt=document.getElementById("fireButton");
+gusse.addEventListener('keypress',function(e){
+    console.log(e.value)
+    if(e.keyCode===13){e.preventDefault();butt.click()}
+    
+})
+butt.addEventListener("click",function(){
+Controller.prossess(gusse.value)
+    gusse.value=""
+})
+}
+window.onload=init();
+
+
+
+
+
+
+
 
 
 
